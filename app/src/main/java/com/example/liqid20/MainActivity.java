@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity  {
         });
 
         Button buttonDashboard = findViewById(R.id.buttonDashboard);
-        buttonDashboard.setOnClickListener(v -> openDash());
+        buttonDashboard.setOnClickListener(v -> openDash(saveSelect.getText().toString().trim()));
 
         buttonSave = findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(new View.OnClickListener() {
@@ -67,12 +67,19 @@ public class MainActivity extends AppCompatActivity  {
                             Integer.parseInt(etTravel.getText().toString().trim()),
                             Integer.parseInt(etWait.getText().toString().trim()),
                             Integer.parseInt(etForce.getText().toString().trim()));
+
+                // Retrieve selected item from listSaveSelect
+                String selectedList = saveSelect.getText().toString().trim();
+
+                //Pass selected item to DashboardActivity
+                openDash(selectedList);
             }
         });
     }
 
-    public void openDash() {
+    public void openDash(String selectedList) {
         Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
+        intent.putExtra("SELECTED_LIST", selectedList);
         startActivity(intent);
     }
 

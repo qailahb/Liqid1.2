@@ -2,6 +2,8 @@ package com.example.liqid20;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +22,13 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+        // Retrieve the selected item from the Intent extra
+        String selectedList = getIntent().getStringExtra("SELECTED_LIST");
+
+        // Use the selected item as a label (you can set it to a TextView or any other UI element)
+        TextView listLabel = findViewById(R.id.listLabel);
+        listLabel.setText(selectedList);
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
 
@@ -50,8 +59,13 @@ public class DashboardActivity extends AppCompatActivity {
                 reading_wait.add(cursor.getString(3));
                 reading_force.add(cursor.getString(4));
             }
+
+            Log.d("DashboardActivity", "reading_id: " + reading_id.toString());
+            Log.d("DashboardActivity", "reading_speed: " + reading_speed.toString());
+            Log.d("DashboardActivity", "reading_travel: " + reading_travel.toString());
+            Log.d("DashboardActivity", "reading_wait: " + reading_wait.toString());
+            Log.d("DashboardActivity", "reading_force: " + reading_force.toString());
         }
-        customAdapter.notifyDataSetChanged();
     }
 
 }
