@@ -1,6 +1,6 @@
 <resources>
     <!-- Activity main -->
-    <string name="app_name">Liqid2.0</string>
+    <string name="app_name">Liqid</string>
 
     <string name="Speed">Speed</string>
     <string name="Travel">Travel</string>
@@ -14,16 +14,21 @@
     <string name="forceField"> </string>
 
     <string name="selectList">Select List</string>
+
     Open activity main
     <string name="Save">Save</string>
     <string name="ViewLists">View List</string>
 
     <string name="large_text">large_text</string>
 
-    <!-- BT Activity -->
     <string name="openMain">Open activity main</string>
     <string name="title_activity_list">ListActivity</string>
     <string name="action_settings">Settings</string>
     <string name="dashboard">Dashboard</string>
     <string name="textview">TextView</string>
+    <string name="index">Index</string>
+    <string name="speed">speed</string>
+    <string name="travel">travel</string>
+    <string name="wait">wait</string>
+    <string name="force">force</string>
 </resources>
