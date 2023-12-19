@@ -6,6 +6,20 @@
     android:layout_height="match_parent"
     tools:context=".DashboardActivity">
 
+    <Button
+        android:id="@+id/buttonExport"
+        android:layout_width="179dp"
+        android:layout_height="62dp"
+        android:backgroundTint="@color/liqid"
+        android:text="@string/export"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.923" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -81,7 +95,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
-        android:layout_width="600dp"
+        android:layout_width="match_parent"
         android:layout_height="614dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -52,6 +52,9 @@ public class DashboardActivity extends AppCompatActivity {
         if(cursor.getCount() == 0) {
             Toast.makeText(this, "No data.", Toast.LENGTH_SHORT).show();
         } else {
+            // added as a fix
+            //int startPosition = reading_id.size();
+
             while (cursor.moveToNext()) {
                 reading_id.add(cursor.getString(0));
                 reading_speed.add(cursor.getString(1));
@@ -65,6 +68,9 @@ public class DashboardActivity extends AppCompatActivity {
             Log.d("DashboardActivity", "reading_travel: " + reading_travel.toString());
             Log.d("DashboardActivity", "reading_wait: " + reading_wait.toString());
             Log.d("DashboardActivity", "reading_force: " + reading_force.toString());
+
+            //customAdapter.notifyItemInserted(startPosition);
+            //customAdapter.notifyItemRangeInserted(startPosition, reading_id.size() - startPosition);
         }
     }
 

@@ -1,6 +1,6 @@
 <resources>
     <!-- Activity main -->
-    <string name="app_name">Liqid</string>
+    <string name="app_name">LIQID</string>
 
     <string name="Speed">Speed</string>
     <string name="Travel">Travel</string>
@@ -31,4 +31,5 @@
     <string name="travel">travel</string>
     <string name="wait">wait</string>
     <string name="force">force</string>
+    <string name="export">Export</string>
 </resources>

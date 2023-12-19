@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
@@ -17,6 +18,9 @@ import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 public class MainActivity extends AppCompatActivity  {
 
     private static final String[] lists = new String[]{ "QFLOW-VI-LOT", "QFLOW-VI-LOT1", "QFLOW-VI-LOT2", "QFLOW-VI-LOT3", "QFLOW-VI-LOT4", "Add New List" };
+
+    // initialisation of hashmap
+    //private Map<String, List<DataModel>> optionToListMap = new HashMap<>();
     EditText etSpeed, etTravel, etWait;
     ImageButton buttonSave;
 
@@ -52,16 +56,42 @@ public class MainActivity extends AppCompatActivity  {
 
         buttonRun.setOnClickListener(view -> {
             // Code to set ESP32 output pin high/low to send data and start force calculation
-            etForce.setText(getString(R.string.mockForce));
+            // etForce.setText(getString(R.string.mockForce)); [for testing purposes]
+
+            Toast.makeText(MainActivity.this, "Run started", Toast.LENGTH_SHORT).show();
+
+            // Force input enabled after test
+            etForce.setEnabled(true);
+
         });
 
         Button buttonDashboard = findViewById(R.id.buttonDashboard);
-        buttonDashboard.setOnClickListener(v -> openDash(saveSelect.getText().toString().trim()));
+        buttonDashboard.setOnClickListener(v -> openDashboard(saveSelect.getText().toString().trim()));
 
         buttonSave = findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                // Check if the force value has been entered by the user
+                if (etForce.isEnabled()) {
+                    // Your code to save data or perform actions with the entered force value
+                    String userForceInput = etForce.getText().toString();
+
+                    // Check if the user input is not empty
+                    if (!userForceInput.isEmpty()) {
+                        // Now you can use the user input (userForceInput) as needed
+                        // For example, you can display a Toast with the input
+                        Toast.makeText(MainActivity.this, "User input: " + userForceInput, Toast.LENGTH_SHORT).show();
+                    } else {
+                        // If the input is empty, you can provide a message to the user
+                        Toast.makeText(MainActivity.this, "Please enter force value", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    // Notify the user to press "Run" first
+                    Toast.makeText(MainActivity.this, "Press 'Run' first", Toast.LENGTH_SHORT).show();
+                }
+
                 MyDatabaseHelper myDB = new MyDatabaseHelper(MainActivity.this);
                 myDB.addList(Integer.parseInt(etSpeed.getText().toString().trim()),
                             Integer.parseInt(etTravel.getText().toString().trim()),
@@ -80,9 +110,14 @@ public class MainActivity extends AppCompatActivity  {
     public void openDash(String selectedList) {
         Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
         intent.putExtra("SELECTED_LIST", selectedList);
-        startActivity(intent);
+        //startActivity(intent);
     }
 
+    public void openDashboard(String selectedList) {
+        Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
+        intent.putExtra("SELECTED_LIST", selectedList);
+        startActivity(intent);
+    }
 
     // SeekBarChangeListener
     private void linkSeekBarAndEditText(SeekBar sb, EditText et) {
