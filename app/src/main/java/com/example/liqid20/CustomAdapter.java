@@ -14,14 +14,15 @@ import java.util.ArrayList;
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
 
     Context context;
-    ArrayList reading_id, reading_speed, reading_travel, reading_wait, reading_force;
+    ArrayList<String> reading_id;
+    ArrayList<Float> reading_speed, reading_travel, reading_wait, reading_force;
 
    CustomAdapter(Context context,
-                 ArrayList reading_id,
-                 ArrayList reading_speed,
-                 ArrayList reading_travel,
-                 ArrayList reading_wait,
-                 ArrayList reading_force) {
+                 ArrayList<String> reading_id,
+                 ArrayList<Float> reading_speed,
+                 ArrayList<Float> reading_travel,
+                 ArrayList<Float> reading_wait,
+                 ArrayList<Float> reading_force) {
 
        this.context = context;
        this.reading_id = reading_id;

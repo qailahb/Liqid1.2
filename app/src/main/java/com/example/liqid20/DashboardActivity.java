@@ -15,7 +15,8 @@ import java.util.ArrayList;
 public class DashboardActivity extends AppCompatActivity {
 
     MyDatabaseHelper myDB;
-    ArrayList<String> reading_id, reading_speed, reading_travel, reading_wait, reading_force;
+    ArrayList<String> reading_id;
+    ArrayList<Float> reading_speed, reading_travel, reading_wait, reading_force;
     CustomAdapter customAdapter;
 
     @Override
@@ -57,10 +58,10 @@ public class DashboardActivity extends AppCompatActivity {
 
             while (cursor.moveToNext()) {
                 reading_id.add(cursor.getString(0));
-                reading_speed.add(cursor.getString(1));
-                reading_travel.add(cursor.getString(2));
-                reading_wait.add(cursor.getString(3));
-                reading_force.add(cursor.getString(4));
+                reading_speed.add(Float.parseFloat(cursor.getString(1))); // Update to Float
+                reading_travel.add(Float.parseFloat(cursor.getString(2))); // Update to Float
+                reading_wait.add(Float.parseFloat(cursor.getString(3)));   // Update to Float
+                reading_force.add(Float.parseFloat(cursor.getString(4)));
             }
 
             Log.d("DashboardActivity", "reading_id: " + reading_id.toString());

@@ -29,7 +29,7 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String query = "CREATE TABLE " + TABLE_NAME + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_SPEED + " INTEGER," + COLUMN_TRAVEL + " INTEGER," + COLUMN_WAIT + " INTEGER," + COLUMN_FORCE + " INTEGER);";
+                COLUMN_SPEED + " REAL," + COLUMN_TRAVEL + " REAL," + COLUMN_WAIT + " REAL," + COLUMN_FORCE + " REAL);";
         db.execSQL(query);
 
     }
@@ -40,7 +40,7 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    void addList(int speed, int travel, int wait, int force) {
+    void addList(float speed, float travel, float wait, float force) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 

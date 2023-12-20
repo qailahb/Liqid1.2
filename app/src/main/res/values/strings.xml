@@ -7,6 +7,7 @@
     <string name="Wait">Wait</string>
 
     <string name="Force">Force</string>
+    <string name="ForceUnits">Force [N]</string>
     <string name="mockForce">12</string>
 
     <string name="Run">Run</string>
@@ -14,6 +15,8 @@
     <string name="forceField"> </string>
 
     <string name="selectList">Select List</string>
+
+    <string name="force_value_format">%s</string>
 
     Open activity main
     <string name="Save">Save</string>

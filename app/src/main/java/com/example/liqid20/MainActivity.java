@@ -15,13 +15,15 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 
+import com.google.android.material.textfield.TextInputLayout;
+
 public class MainActivity extends AppCompatActivity  {
 
     private static final String[] lists = new String[]{ "QFLOW-VI-LOT", "QFLOW-VI-LOT1", "QFLOW-VI-LOT2", "QFLOW-VI-LOT3", "QFLOW-VI-LOT4", "Add New List" };
 
     // initialisation of hashmap
-    //private Map<String, List<DataModel>> optionToListMap = new HashMap<>();
-    EditText etSpeed, etTravel, etWait;
+    // private Map<String, List<DataModel>> optionToListMap = new HashMap<>();
+    EditText etSpeed, etTravel, etWait, etForce;
     ImageButton buttonSave;
 
     @Override
@@ -39,15 +41,144 @@ public class MainActivity extends AppCompatActivity  {
         SeekBar sbTravel = findViewById(R.id.seekBarTravel);
         SeekBar sbWait = findViewById(R.id.seekBarWait);
 
-        EditText etForce = findViewById(R.id.valueForce);
-
         // Initialises button
         Button buttonRun = findViewById(R.id.buttonRun);
 
         etSpeed = findViewById(R.id.Speed);
         etTravel = findViewById(R.id.Travel);
         etWait = findViewById(R.id.Wait);
+        etForce = findViewById(R.id.valueForce);
 
+        // Implement TextWatcher to ensure proper input format
+        DecimalTextWatcher decimalInputTextWatcher = new DecimalTextWatcher(etSpeed);
+        etSpeed.addTextChangedListener(decimalInputTextWatcher);
+
+        decimalInputTextWatcher = new DecimalTextWatcher(etTravel);
+        etTravel.addTextChangedListener(decimalInputTextWatcher);
+
+        decimalInputTextWatcher = new DecimalTextWatcher(etWait);
+        etWait.addTextChangedListener(decimalInputTextWatcher);
+
+        decimalInputTextWatcher = new DecimalTextWatcher(etForce);
+        etForce.addTextChangedListener(decimalInputTextWatcher);
+
+        TextInputLayout textInputLayout2 = findViewById(R.id.textInputLayout2);
+        TextInputLayout textInputLayout3 = findViewById(R.id.textInputLayout3);
+        TextInputLayout textInputLayout = findViewById(R.id.textInputLayout);
+
+        etSpeed.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus && etSpeed.getText().length() == 0) {
+                textInputLayout2.setHint("Speed [mm/s]");
+            } else if (!hasFocus && etSpeed.getText().length() == 0) {
+                textInputLayout2.setHint("Speed");
+            }
+        });
+
+        etTravel.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus && etTravel.getText().length() == 0) {
+                textInputLayout3.setHint("Travel [mm]");
+            } else if (!hasFocus && etTravel.getText().length() == 0) {
+                textInputLayout3.setHint("Travel");
+            }
+        });
+
+        etWait.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus && etWait.getText().length() == 0) {
+                textInputLayout.setHint("Wait [mm]");
+            } else if (!hasFocus && etWait.getText().length() == 0) {
+                textInputLayout.setHint("Wait");
+            }
+        });
+
+        etSpeed.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                float speedValue = Float.parseFloat(editable.toString());
+                float speed_max = 15;
+
+                if (editable.length() > 0) {
+                    // User has started typing, update hint
+                    textInputLayout2.setHint("Speed [mm/s]");
+
+                    if (speedValue > speed_max) {
+                        textInputLayout2.setError("Value too high (max: " + speed_max + " + mm");
+                    } else {
+                        textInputLayout2.setError(null);
+                    }
+
+                } else {
+                    // No input, reset to default hint
+                    textInputLayout2.setHint("Speed");
+                }
+            }
+        });
+
+        etTravel.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() > 0) {
+                    // User has started typing, update hint
+                    textInputLayout3.setHint("Travel [mm]");
+                } else {
+                    // No input, reset to default hint
+                    textInputLayout3.setHint("Travel");
+                }
+
+                try {
+                    float travelValue = Float.parseFloat(editable.toString());
+                    // Max allowed value
+                    float travel_max = 15;
+
+                    if (travelValue > travel_max) {
+                        textInputLayout3.setError("Value too high (max: " + travel_max + " + mm");
+                    } else {
+                        textInputLayout3.setError(null);
+                    }
+                } catch (NumberFormatException e) {
+                    // Handle the case when text can't be converted to a float
+                    textInputLayout3.setError("Invalid input");
+                }
+            }
+        });
+
+        etWait.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() > 0) {
+                    // User has started typing, update hint
+                    textInputLayout.setHint("Wait [mm]");
+                } else {
+                    // No input, reset to default hint
+                    textInputLayout.setHint("Wait");
+                }
+                try {
+                    float waitValue = Float.parseFloat(editable.toString());
+                    // Max allowed value
+                    float wait_max = 15;
+
+                    if (waitValue > wait_max) {
+                        textInputLayout.setError("Value too high (max: " + wait_max + " + mm");
+                    } else {
+                        textInputLayout.setError(null);
+                    }
+                } catch (NumberFormatException e) {
+                    // Handle the case when text can't be converted to a float
+                    textInputLayout.setError("Invalid input");
+                }
+            }
+        });
 
         // Links SeekBar and EditText pairs
         linkSeekBarAndEditText(sbSpeed, etSpeed);
@@ -56,12 +187,10 @@ public class MainActivity extends AppCompatActivity  {
 
         buttonRun.setOnClickListener(view -> {
             // Code to set ESP32 output pin high/low to send data and start force calculation
+
             // etForce.setText(getString(R.string.mockForce)); [for testing purposes]
-
-            Toast.makeText(MainActivity.this, "Run started", Toast.LENGTH_SHORT).show();
-
-            // Force input enabled after test
-            etForce.setEnabled(true);
+            // Toast.makeText(MainActivity.this, "Run started", Toast.LENGTH_SHORT).show();
+            // etForce.setEnabled(true); [Force input enabled after test]
 
         });
 
@@ -73,36 +202,23 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onClick(View view) {
 
-                // Check if the force value has been entered by the user
-                if (etForce.isEnabled()) {
-                    // Your code to save data or perform actions with the entered force value
-                    String userForceInput = etForce.getText().toString();
-
-                    // Check if the user input is not empty
-                    if (!userForceInput.isEmpty()) {
-                        // Now you can use the user input (userForceInput) as needed
-                        // For example, you can display a Toast with the input
-                        Toast.makeText(MainActivity.this, "User input: " + userForceInput, Toast.LENGTH_SHORT).show();
-                    } else {
-                        // If the input is empty, you can provide a message to the user
-                        Toast.makeText(MainActivity.this, "Please enter force value", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    // Notify the user to press "Run" first
-                    Toast.makeText(MainActivity.this, "Press 'Run' first", Toast.LENGTH_SHORT).show();
+                // Checks if force value has been entered by user
+                if (etForce.getText().toString().trim().isEmpty()) {
+                    Toast.makeText(MainActivity.this, "Please enter force value", Toast.LENGTH_SHORT).show();
                 }
+                else {
+                    MyDatabaseHelper myDB = new MyDatabaseHelper(MainActivity.this);
+                    myDB.addList(Float.parseFloat(etSpeed.getText().toString().trim()),
+                            Float.parseFloat(etTravel.getText().toString().trim()),
+                            Float.parseFloat(etWait.getText().toString().trim()),
+                            Float.parseFloat(etForce.getText().toString().trim()));
 
-                MyDatabaseHelper myDB = new MyDatabaseHelper(MainActivity.this);
-                myDB.addList(Integer.parseInt(etSpeed.getText().toString().trim()),
-                            Integer.parseInt(etTravel.getText().toString().trim()),
-                            Integer.parseInt(etWait.getText().toString().trim()),
-                            Integer.parseInt(etForce.getText().toString().trim()));
+                    // Retrieve selected item from listSaveSelect
+                    String selectedList = saveSelect.getText().toString().trim();
 
-                // Retrieve selected item from listSaveSelect
-                String selectedList = saveSelect.getText().toString().trim();
-
-                //Pass selected item to DashboardActivity
-                openDash(selectedList);
+                    //Pass selected item to DashboardActivity
+                    openDash(selectedList);
+                }
             }
         });
     }

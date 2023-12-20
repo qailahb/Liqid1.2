@@ -20,7 +20,7 @@
 
         <activity
             android:name=".BTActivity"
-            android:label="Liqid"
+            android:label="LIQID"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
