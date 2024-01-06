@@ -41,15 +41,15 @@ public class DashboardActivity extends AppCompatActivity {
         reading_wait = new ArrayList<>();
         reading_force = new ArrayList<>();
 
-        storeData();
+        storeData(selectedList);
 
         customAdapter = new CustomAdapter(DashboardActivity.this, reading_id, reading_speed, reading_travel, reading_wait, reading_force);
         recyclerView.setAdapter(customAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(DashboardActivity.this));
     }
 
-    void storeData() {
-        Cursor cursor = myDB.readData();
+    void storeData(String selectedList) {
+        Cursor cursor = myDB.readData(selectedList);
         if(cursor.getCount() == 0) {
             Toast.makeText(this, "No data.", Toast.LENGTH_SHORT).show();
         } else {

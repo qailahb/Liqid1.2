@@ -208,25 +208,21 @@ public class MainActivity extends AppCompatActivity  {
                 }
                 else {
                     MyDatabaseHelper myDB = new MyDatabaseHelper(MainActivity.this);
-                    myDB.addList(Float.parseFloat(etSpeed.getText().toString().trim()),
-                            Float.parseFloat(etTravel.getText().toString().trim()),
-                            Float.parseFloat(etWait.getText().toString().trim()),
-                            Float.parseFloat(etForce.getText().toString().trim()));
 
                     // Retrieve selected item from listSaveSelect
                     String selectedList = saveSelect.getText().toString().trim();
 
+                    myDB.addList(selectedList,
+                            Float.parseFloat(etSpeed.getText().toString().trim()),
+                            Float.parseFloat(etTravel.getText().toString().trim()),
+                            Float.parseFloat(etWait.getText().toString().trim()),
+                            Float.parseFloat(etForce.getText().toString().trim()));
+
                     //Pass selected item to DashboardActivity
-                    openDash(selectedList);
+                    // openDash(selectedList);
                 }
             }
         });
-    }
-
-    public void openDash(String selectedList) {
-        Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
-        intent.putExtra("SELECTED_LIST", selectedList);
-        //startActivity(intent);
     }
 
     public void openDashboard(String selectedList) {

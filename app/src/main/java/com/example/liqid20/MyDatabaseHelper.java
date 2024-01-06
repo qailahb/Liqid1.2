@@ -14,7 +14,8 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
     private final Context context;
     private static final String DATABASE_NAME = "Dashboard.db";
     private static final int DATABASE_VERSION = 1;
-    private static final String TABLE_NAME = "dashboard";
+    private static final String TABLE_DATASET = "dataset";
+    private static final String COLUMN_LIST = "list";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_SPEED = "speed";
     private static final String COLUMN_TRAVEL = "travel";
@@ -28,27 +29,28 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE " + TABLE_NAME + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+        String query = "CREATE TABLE " + TABLE_DATASET + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                COLUMN_LIST + " STRING, " +
                 COLUMN_SPEED + " REAL," + COLUMN_TRAVEL + " REAL," + COLUMN_WAIT + " REAL," + COLUMN_FORCE + " REAL);";
         db.execSQL(query);
-
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATASET);
         onCreate(db);
     }
 
-    void addList(float speed, float travel, float wait, float force) {
+    void addList(String list, float speed, float travel, float wait, float force) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
+        cv.put(COLUMN_LIST, list);
         cv.put(COLUMN_SPEED, speed);
         cv.put(COLUMN_TRAVEL, travel);
         cv.put(COLUMN_WAIT, wait);
         cv.put(COLUMN_FORCE, force);
-        long result = db.insert(TABLE_NAME, null, cv);
+        long result = db.insert(TABLE_DATASET, null, cv);
         if(result == -1) {
             Toast.makeText(context, "Failed to insert", Toast.LENGTH_SHORT).show();
         } else {
@@ -56,8 +58,8 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    Cursor readData() {
-        String query = "SELECT * FROM " + TABLE_NAME;
+    Cursor readData(String list) {
+        String query = String.format("Select id, speed, travel, wait, force from dataset where list = '%s'", list);
         SQLiteDatabase db = this.getReadableDatabase();
 
         Cursor cursor = null;
