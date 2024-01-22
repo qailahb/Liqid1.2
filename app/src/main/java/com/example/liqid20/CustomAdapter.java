@@ -63,9 +63,10 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         holder.travel_txt.setText(String.valueOf(reading_travel.get(position)));
         holder.wait_txt.setText(String.valueOf(reading_wait.get(position)));
         holder.force_txt.setText(String.valueOf(reading_force.get(position)));
-    }
 
-    @Override
+   }
+
+        @Override
     public int getItemCount() {
        return reading_id.size();
     }

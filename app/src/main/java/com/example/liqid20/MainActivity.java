@@ -1,14 +1,21 @@
 package com.example.liqid20;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -35,6 +42,18 @@ public class MainActivity extends AppCompatActivity  {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_item, lists);
         saveSelect.setThreshold(1);
         saveSelect.setAdapter(adapter);
+
+        // Set OnItemClickListener for the AutoCompleteTextView
+        saveSelect.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedList = (String) parent.getItemAtPosition(position);
+
+            if (selectedList.equals("Add New List")) {
+                // Handle the click for "Add New List"
+                showPopup(view);
+            } else {
+                // Handle other list selections if needed
+            }
+        });
 
         // Initialises SeekBars and EditTexts
         SeekBar sbSpeed = findViewById(R.id.seekBarSpeed);
@@ -180,6 +199,38 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
+        etTravel.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length() > 0) {
+                    // User has started typing, update hint
+                    textInputLayout3.setHint("Travel [mm]");
+                } else {
+                    // No input, reset to default hint
+                    textInputLayout3.setHint("Travel");
+                }
+
+                try {
+                    float travelValue = Float.parseFloat(editable.toString());
+                    // Max allowed value
+                    float travel_max = 15;
+
+                    if (travelValue > travel_max) {
+                        textInputLayout3.setError("Value too high (max: " + travel_max + " + mm");
+                    } else {
+                        textInputLayout3.setError(null);
+                    }
+                } catch (NumberFormatException e) {
+                    // Handle the case when text can't be converted to a float
+                    textInputLayout3.setError("Invalid input");
+                }
+            }
+        });
+
         // Links SeekBar and EditText pairs
         linkSeekBarAndEditText(sbSpeed, etSpeed);
         linkSeekBarAndEditText(sbTravel, etTravel);
@@ -224,6 +275,61 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
     }
+
+    private void showPopup(View anchorView) {
+        // Create a PopupWindow with a custom layout
+        View popupView = LayoutInflater.from(this).inflate(R.layout.popup, null);
+        PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+
+        // Enable background dimming
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000"))); // Dark gray background color with 50% opacity
+
+        // Set soft input mode to adjustResize for automatic keyboard pop-up
+        popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+        // Set up your popup content and functionality
+        EditText editTextNewListName = popupView.findViewById(R.id.textInputNewList);
+        Button buttonSaveNewList = popupView.findViewById(R.id.buttonSaveNewList);
+
+        buttonSaveNewList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handle the save button click
+                String newListName = editTextNewListName.getText().toString().trim();
+
+                if (!newListName.isEmpty()) {
+                    // Add the new list name to the 'lists' array
+                    lists[lists.length - 2] = newListName;
+
+                    // Notify the AutoCompleteTextView adapter about the data change
+                    AppCompatAutoCompleteTextView saveSelect = findViewById(R.id.listSaveSelect);
+
+                    ArrayAdapter<String> adapter = (ArrayAdapter<String>) saveSelect.getAdapter();
+                    adapter.notifyDataSetChanged();
+
+                    // Dismiss the popup
+                    popupWindow.dismiss();
+                } else {
+                    Toast.makeText(MainActivity.this, "Please enter a name for the new list", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Get the root view of the activity
+        View rootView = getWindow().getDecorView().getRootView();
+
+        // Calculate the center of the screen
+        int[] location = new int[2];
+        rootView.getLocationOnScreen(location);
+        int centerX = location[0] + rootView.getWidth() / 2;
+        int centerY = location[1] + rootView.getHeight() / 2;
+
+        // Show the popup at the center of the screen
+        popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
+    }
+
+
+
 
     public void openDashboard(String selectedList) {
         Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
