@@ -1,5 +1,6 @@
 package com.example.liqid20;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -10,12 +11,10 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -277,15 +276,13 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     private void showPopup(View anchorView) {
-        // Create a PopupWindow with a custom layout
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View popupView = LayoutInflater.from(this).inflate(R.layout.popup, null);
-        PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        builder.setView(popupView);
+        AlertDialog dialog = builder.create();
 
         // Enable background dimming
-        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000"))); // Dark gray background color with 50% opacity
-
-        // Set soft input mode to adjustResize for automatic keyboard pop-up
-        popupWindow.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000"))); // Dark gray background color with 50% opacity
 
         // Set up your popup content and functionality
         EditText editTextNewListName = popupView.findViewById(R.id.textInputNewList);
@@ -308,7 +305,7 @@ public class MainActivity extends AppCompatActivity  {
                     adapter.notifyDataSetChanged();
 
                     // Dismiss the popup
-                    popupWindow.dismiss();
+                    dialog.dismiss();
                 } else {
                     Toast.makeText(MainActivity.this, "Please enter a name for the new list", Toast.LENGTH_SHORT).show();
                 }
@@ -325,10 +322,10 @@ public class MainActivity extends AppCompatActivity  {
         int centerY = location[1] + rootView.getHeight() / 2;
 
         // Show the popup at the center of the screen
-        popupWindow.showAtLocation(rootView, Gravity.CENTER, 0, 0);
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setGravity(Gravity.CENTER);
     }
-
-
 
 
     public void openDashboard(String selectedList) {

@@ -69,4 +69,10 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
         return cursor;
     }
 
+    public Cursor getDataFromTable() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM " + TABLE_DATASET, null);
+    }
+
+
 }

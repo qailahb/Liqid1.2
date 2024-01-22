@@ -1,15 +1,27 @@
 package com.example.liqid20;
 
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.opencsv.CSVWriter;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -18,12 +30,31 @@ public class DashboardActivity extends AppCompatActivity {
     ArrayList<String> reading_id;
     ArrayList<Float> reading_speed, reading_travel, reading_wait, reading_force;
     CustomAdapter customAdapter;
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
+        // Check and request WRITE_EXTERNAL_STORAGE permission if needed
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_WRITE_EXTERNAL_STORAGE
+            );
+        }
+
+        Button exportButton = findViewById(R.id.buttonExport);
+        exportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                exportDataToCsv();
+            }
+        });
         // Retrieve the selected item from the Intent extra
         String selectedList = getIntent().getStringExtra("SELECTED_LIST");
 
@@ -74,5 +105,71 @@ public class DashboardActivity extends AppCompatActivity {
             //customAdapter.notifyItemRangeInserted(startPosition, reading_id.size() - startPosition);
         }
     }
+
+    private void exportDataToCsv() {
+        MyDatabaseHelper dbHelper = new MyDatabaseHelper(this);
+        Cursor cursor = dbHelper.getDataFromTable();
+
+        if (cursor != null) {
+            try {
+                // Directory in the Documents folder
+                File directory = new File(Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_DOCUMENTS), "LIQID");
+
+                if (!directory.exists()) {
+                    directory.mkdirs();
+                }
+
+                // File in the directory
+                File file = new File(directory, "exported_data.csv");
+
+                // Writes data to CSV file
+                writeDataToCsv(cursor, file);
+
+                Toast.makeText(this, "Data exported to " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+            } finally {
+                cursor.close();
+            }
+        }
+    }
+
+
+    private void writeDataToCsv(Cursor cursor, File file) {
+        try {
+            FileWriter fw = new FileWriter(file);
+            CSVWriter csvWriter = new CSVWriter(fw);
+
+            // Writes column names to CSV file
+            csvWriter.writeNext(cursor.getColumnNames());
+
+            // Writes data rows to CSV file
+            while (cursor.moveToNext()) {
+                String[] row = new String[cursor.getColumnCount()];
+                for (int i = 0; i < cursor.getColumnCount(); i++) {
+                    row[i] = cursor.getString(i);
+                }
+                csvWriter.writeNext(row);
+            }
+
+            csvWriter.close();
+            fw.close();
+        } catch (IOException e) {
+            Log.e("CSV Export", "Error writing CSV", e);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_WRITE_EXTERNAL_STORAGE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                exportDataToCsv();
+            } else {
+                Toast.makeText(this, "Permission denied. Cannot export data.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
 }

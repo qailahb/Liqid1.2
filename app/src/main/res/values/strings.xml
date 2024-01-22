@@ -21,6 +21,7 @@
     Open activity main
     <string name="Save">Save</string>
     <string name="ViewLists">View List</string>
+    <string name="new_list">Enter name of new list</string>
 
     <string name="large_text">large_text</string>
 
