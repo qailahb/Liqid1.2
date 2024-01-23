@@ -25,9 +25,9 @@ import com.google.android.material.textfield.TextInputLayout;
 
 public class MainActivity extends AppCompatActivity  {
 
-    private static final String[] lists = new String[]{ "QFLOW-VI-LOT", "QFLOW-VI-LOT1", "QFLOW-VI-LOT2", "QFLOW-VI-LOT3", "QFLOW-VI-LOT4", "Add New List" };
+    //private static final String[] lists = new String[]{ "QFLOW-VI-LOT", "QFLOW-VI-LOT1", "QFLOW-VI-LOT2", "QFLOW-VI-LOT3", "QFLOW-VI-LOT4", "Add New List" };
 
-    // initialisation of hashmap
+    // Initialisation of hashmap - if decided to use
     // private Map<String, List<DataModel>> optionToListMap = new HashMap<>();
     EditText etSpeed, etTravel, etWait, etForce;
     ImageButton buttonSave;
@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_main);
 
         AppCompatAutoCompleteTextView saveSelect = findViewById(R.id.listSaveSelect);
+        MyDatabaseHelper myDB = new MyDatabaseHelper(MainActivity.this);
+        String[] lists = myDB.getListNames();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_item, lists);
         saveSelect.setThreshold(1);
         saveSelect.setAdapter(adapter);
@@ -49,8 +51,9 @@ public class MainActivity extends AppCompatActivity  {
             if (selectedList.equals("Add New List")) {
                 // Handle the click for "Add New List"
                 showPopup(view);
-            } else {
-                // Handle other list selections if needed
+            }
+            else {
+                // Handle other list selections - default selections
             }
         });
 
@@ -119,7 +122,7 @@ public class MainActivity extends AppCompatActivity  {
                 float speed_max = 15;
 
                 if (editable.length() > 0) {
-                    // User has started typing, update hint
+                    // User has started typing, updates hint
                     textInputLayout2.setHint("Speed [mm/s]");
 
                     if (speedValue > speed_max) {
@@ -152,7 +155,7 @@ public class MainActivity extends AppCompatActivity  {
 
                 try {
                     float travelValue = Float.parseFloat(editable.toString());
-                    // Max allowed value
+                    // Maximum allowed value (set)
                     float travel_max = 15;
 
                     if (travelValue > travel_max) {
@@ -161,7 +164,7 @@ public class MainActivity extends AppCompatActivity  {
                         textInputLayout3.setError(null);
                     }
                 } catch (NumberFormatException e) {
-                    // Handle the case when text can't be converted to a float
+                    // Handles the case when text can't be converted to a float
                     textInputLayout3.setError("Invalid input");
                 }
             }
@@ -183,7 +186,7 @@ public class MainActivity extends AppCompatActivity  {
                 }
                 try {
                     float waitValue = Float.parseFloat(editable.toString());
-                    // Max allowed value
+                    // Maximum allowed value
                     float wait_max = 15;
 
                     if (waitValue > wait_max) {
@@ -192,7 +195,7 @@ public class MainActivity extends AppCompatActivity  {
                         textInputLayout.setError(null);
                     }
                 } catch (NumberFormatException e) {
-                    // Handle the case when text can't be converted to a float
+                    // Handles the case when text can't be converted to a float
                     textInputLayout.setError("Invalid input");
                 }
             }
@@ -215,7 +218,7 @@ public class MainActivity extends AppCompatActivity  {
 
                 try {
                     float travelValue = Float.parseFloat(editable.toString());
-                    // Max allowed value
+                    // Maximum allowed value
                     float travel_max = 15;
 
                     if (travelValue > travel_max) {
@@ -268,7 +271,7 @@ public class MainActivity extends AppCompatActivity  {
                             Float.parseFloat(etWait.getText().toString().trim()),
                             Float.parseFloat(etForce.getText().toString().trim()));
 
-                    //Pass selected item to DashboardActivity
+                    // Pass selected item to DashboardActivity
                     // openDash(selectedList);
                 }
             }
@@ -291,12 +294,14 @@ public class MainActivity extends AppCompatActivity  {
         buttonSaveNewList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handle the save button click
+                // Handles the instance of saving the data set
                 String newListName = editTextNewListName.getText().toString().trim();
 
                 if (!newListName.isEmpty()) {
+                    MyDatabaseHelper myDB = new MyDatabaseHelper(MainActivity.this);
+                    myDB.addListName(newListName);
                     // Add the new list name to the 'lists' array
-                    lists[lists.length - 2] = newListName;
+                    //lists[lists.length - 2] = newListName;
 
                     // Notify the AutoCompleteTextView adapter about the data change
                     AppCompatAutoCompleteTextView saveSelect = findViewById(R.id.listSaveSelect);
@@ -312,16 +317,15 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
-        // Get the root view of the activity
         View rootView = getWindow().getDecorView().getRootView();
 
-        // Calculate the center of the screen
+        // Calculates the center of the screen
         int[] location = new int[2];
         rootView.getLocationOnScreen(location);
         int centerX = location[0] + rootView.getWidth() / 2;
         int centerY = location[1] + rootView.getHeight() / 2;
 
-        // Show the popup at the center of the screen
+        // Shows popup at the center of the screen
         dialog.show();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setGravity(Gravity.CENTER);

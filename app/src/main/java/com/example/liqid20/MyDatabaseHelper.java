@@ -9,6 +9,9 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class MyDatabaseHelper extends SQLiteOpenHelper {
 
     private final Context context;
@@ -29,15 +32,22 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String query = "CREATE TABLE " + TABLE_DATASET + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                COLUMN_LIST + " STRING, " +
-                COLUMN_SPEED + " REAL," + COLUMN_TRAVEL + " REAL," + COLUMN_WAIT + " REAL," + COLUMN_FORCE + " REAL);";
-        db.execSQL(query);
+        String sqlDatasetCreate = "CREATE TABLE dataset (id integer primary key autoincrement, list string, speed real, travel real, wait real, force real);";
+        db.execSQL(sqlDatasetCreate);
+        String sqlListNamesCreate = "CREATE TABLE list_names (id integer primary key autoincrement, name string);";
+        db.execSQL(sqlListNamesCreate);
+        String sqlDefaultListNames = "insert into list_names (name) values ('QFLOW-VI-LOT'), ('QFLOW-VI-LOT1'), ('QFLOW-VI-LOT2'), ('QFLOW-VI-LOT3'), ('QFLOW-VI-LOT4');";
+        db.execSQL(sqlDefaultListNames);
+//
+//        String query = "CREATE TABLE " + TABLE_DATASET + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+//                COLUMN_LIST + " STRING, " +
+//                COLUMN_SPEED + " REAL," + COLUMN_TRAVEL + " REAL," + COLUMN_WAIT + " REAL," + COLUMN_FORCE + " REAL);";
+//        db.execSQL(query);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_DATASET);
+        db.execSQL("DROP TABLE IF EXISTS dataset; DROP TABLE IF EXISTS list_names;");
         onCreate(db);
     }
 
@@ -58,6 +68,20 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    void addListName(String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put("name", name);
+        long result = db.insert("list_names", null, cv);
+        if(result == -1) {
+            Toast.makeText(context, "Failed to insert", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Added Successfully", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     Cursor readData(String list) {
         String query = String.format("Select id, speed, travel, wait, force from dataset where list = '%s'", list);
         SQLiteDatabase db = this.getReadableDatabase();
@@ -74,5 +98,15 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery("SELECT * FROM " + TABLE_DATASET, null);
     }
 
-
+    public String[] getListNames() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT name FROM list_names", null);
+        ArrayList<String> listNames = new ArrayList<String>();
+        while (cursor.moveToNext()) {
+            listNames.add(cursor.getString(0));
+        }
+        String[] result = new String[listNames.size()];
+        listNames.toArray(result);
+        return result;
+    }
 }
