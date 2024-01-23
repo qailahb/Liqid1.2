@@ -7,11 +7,11 @@
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\qaila\.android\avd\Galaxy_Tab.2_API_33.avd" />
+            <value value="C:\Users\qaila\.android\avd\Samsung_Tab_A9_API_33_II.avd" />
           </Key>
         </deviceKey>
       </Target>
     </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2024-01-22T11:48:59.307292600Z" />
+    <timeTargetWasSelectedWithDropDown value="2024-01-23T10:55:47.264340300Z" />
   </component>
 </project>

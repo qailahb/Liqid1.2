@@ -10,7 +10,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
-import java.util.List;
 
 class MyDatabaseHelper extends SQLiteOpenHelper {
 
@@ -34,11 +33,13 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String sqlDatasetCreate = "CREATE TABLE dataset (id integer primary key autoincrement, list string, speed real, travel real, wait real, force real);";
         db.execSQL(sqlDatasetCreate);
+
         String sqlListNamesCreate = "CREATE TABLE list_names (id integer primary key autoincrement, name string);";
         db.execSQL(sqlListNamesCreate);
+
         String sqlDefaultListNames = "insert into list_names (name) values ('QFLOW-VI-LOT'), ('QFLOW-VI-LOT1'), ('QFLOW-VI-LOT2'), ('QFLOW-VI-LOT3'), ('QFLOW-VI-LOT4');";
         db.execSQL(sqlDefaultListNames);
-//
+
 //        String query = "CREATE TABLE " + TABLE_DATASET + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
 //                COLUMN_LIST + " STRING, " +
 //                COLUMN_SPEED + " REAL," + COLUMN_TRAVEL + " REAL," + COLUMN_WAIT + " REAL," + COLUMN_FORCE + " REAL);";
@@ -60,6 +61,7 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_TRAVEL, travel);
         cv.put(COLUMN_WAIT, wait);
         cv.put(COLUMN_FORCE, force);
+
         long result = db.insert(TABLE_DATASET, null, cv);
         if(result == -1) {
             Toast.makeText(context, "Failed to insert", Toast.LENGTH_SHORT).show();
@@ -109,4 +111,25 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
         listNames.toArray(result);
         return result;
     }
+
+    public Cursor deleteTable() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("DROP name FROM list_names", null);
+    }
+
+    public void updateListName(String oldListName, String newListName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("name", newListName);
+
+        int rowsAffected = db.update("list_names", values, "name = ?", new String[]{oldListName});
+
+        if (rowsAffected > 0) {
+            Toast.makeText(context, "List name updated successfully", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(context, "Failed to update list name", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 }

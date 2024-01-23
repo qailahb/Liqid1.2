@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity  {
     // private Map<String, List<DataModel>> optionToListMap = new HashMap<>();
     EditText etSpeed, etTravel, etWait, etForce;
     ImageButton buttonSave;
+    ImageButton buttonSaveNew;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +45,11 @@ public class MainActivity extends AppCompatActivity  {
         saveSelect.setThreshold(1);
         saveSelect.setAdapter(adapter);
 
-        // Set OnItemClickListener for the AutoCompleteTextView
-        saveSelect.setOnItemClickListener((parent, view, position, id) -> {
-            String selectedList = (String) parent.getItemAtPosition(position);
-
-            if (selectedList.equals("Add New List")) {
-                // Handle the click for "Add New List"
+        buttonSaveNew = findViewById(R.id.buttonSaveNew);
+        buttonSaveNew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 showPopup(view);
-            }
-            else {
-                // Handle other list selections - default selections
             }
         });
 

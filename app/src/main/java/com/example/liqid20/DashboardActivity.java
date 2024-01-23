@@ -1,12 +1,22 @@
 package com.example.liqid20;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +41,9 @@ public class DashboardActivity extends AppCompatActivity {
     ArrayList<Float> reading_speed, reading_travel, reading_wait, reading_force;
     CustomAdapter customAdapter;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+    ImageButton buttonEditListName;
+    RadioButton radioButtonYes;
+    RadioButton radioButtonNo;
 
 
     @Override
@@ -77,6 +90,108 @@ public class DashboardActivity extends AppCompatActivity {
         customAdapter = new CustomAdapter(DashboardActivity.this, reading_id, reading_speed, reading_travel, reading_wait, reading_force);
         recyclerView.setAdapter(customAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(DashboardActivity.this));
+
+        buttonEditListName = findViewById(R.id.buttonEditListName);
+        buttonEditListName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPopup(view);
+            }
+        });
+    }
+
+    private void showPopupDelete(View anchorView) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View popupView = LayoutInflater.from(this).inflate(R.layout.popup_delete, null);
+        builder.setView(popupView);
+        AlertDialog dialog = builder.create();
+
+        // Enable background dimming
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000"))); // Dark gray background color with 50% opacity
+
+        // Set up your popup content and functionality
+        RadioButton radioButtonYes = findViewById(R.id.radioButtonYes);
+        RadioButton radioButtonNo = findViewById(R.id.radioButtonNo);
+
+        radioButtonYes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myDB.deleteTable();
+            }
+        });
+
+        radioButtonNo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DashboardActivity.this, DashboardActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        View rootView = getWindow().getDecorView().getRootView();
+
+        // Calculates the center of the screen
+        int[] location = new int[2];
+        rootView.getLocationOnScreen(location);
+        int centerX = location[0] + rootView.getWidth() / 2;
+        int centerY = location[1] + rootView.getHeight() / 2;
+
+        // Shows popup at the center of the screen
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setGravity(Gravity.CENTER);
+    }
+
+    private void showPopup(View anchorView) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View popupView = LayoutInflater.from(this).inflate(R.layout.popup_rename, null);
+        builder.setView(popupView);
+        AlertDialog dialog = builder.create();
+
+        // Enable background dimming
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000"))); // Dark gray background color with 50% opacity
+
+        // Set up your popup content and functionality
+        EditText editTextNewListName = popupView.findViewById(R.id.textInputNewList);
+        Button buttonSaveNewList = popupView.findViewById(R.id.buttonSaveNewList);
+
+        buttonSaveNewList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handles the instance of saving the data set
+                String newListName = editTextNewListName.getText().toString().trim();
+
+                if (!newListName.isEmpty()) {
+                    MyDatabaseHelper myDB = new MyDatabaseHelper(DashboardActivity.this);
+                    myDB.updateListName("QFLOW-VI-LOT1", "NewListName");
+                    // saves the new name in the 'lists' array
+
+                    // Notify the AutoCompleteTextView adapter about the data change
+                    // AppCompatAutoCompleteTextView saveSelect = findViewById(R.id.listSaveSelect);
+
+                    // ArrayAdapter<String> adapter = (ArrayAdapter<String>) saveSelect.getAdapter();
+                    // adapter.notifyDataSetChanged();
+
+                    // Dismiss the popup
+                    dialog.dismiss();
+                } else {
+                    Toast.makeText(DashboardActivity.this, "Please enter a new name for the list", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        View rootView = getWindow().getDecorView().getRootView();
+
+        // Calculates the center of the screen
+        int[] location = new int[2];
+        rootView.getLocationOnScreen(location);
+        int centerX = location[0] + rootView.getWidth() / 2;
+        int centerY = location[1] + rootView.getHeight() / 2;
+
+        // Shows popup at the center of the screen
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setGravity(Gravity.CENTER);
     }
 
     void storeData(String selectedList) {
@@ -170,6 +285,5 @@ public class DashboardActivity extends AppCompatActivity {
             }
         }
     }
-
 
 }

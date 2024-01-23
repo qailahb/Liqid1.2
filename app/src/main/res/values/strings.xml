@@ -22,6 +22,7 @@
     <string name="Save">Save</string>
     <string name="ViewLists">View List</string>
     <string name="new_list">Enter name of new list</string>
+    <string name="rename_list">Enter new name of list</string>
 
     <string name="large_text">large_text</string>
 
@@ -36,4 +37,7 @@
     <string name="wait">wait</string>
     <string name="force">force</string>
     <string name="export">Export</string>
+    <string name="list_delete">Are you sure you want to delete this list?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
