@@ -163,7 +163,7 @@ public class DashboardActivity extends AppCompatActivity {
 
                 if (!newListName.isEmpty()) {
                     MyDatabaseHelper myDB = new MyDatabaseHelper(DashboardActivity.this);
-                    myDB.updateListName("QFLOW-VI-LOT1", "NewListName");
+                    myDB.updateListName(selectedList, newListName);
                     // saves the new name in the 'lists' array
 
                     // Notify the AutoCompleteTextView adapter about the data change

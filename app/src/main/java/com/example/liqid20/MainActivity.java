@@ -7,6 +7,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity  {
     EditText etSpeed, etTravel, etWait, etForce;
     ImageButton buttonSave;
     ImageButton buttonSaveNew;
+    private String selectedList = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +51,23 @@ public class MainActivity extends AppCompatActivity  {
         buttonSaveNew.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("MainActivity", "Button Save New clicked");
                 showPopup(view);
             }
+        });
+
+        // Update the value of selectedList whenever the text changes
+        saveSelect.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                selectedList = charSequence.toString().trim();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
         });
 
         // Initialises SeekBars and EditTexts
@@ -251,15 +268,34 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void onClick(View view) {
 
+                String selectedList = saveSelect.getText().toString().trim();
+
                 // Checks if force value has been entered by user
-                if (etForce.getText().toString().trim().isEmpty()) {
+                if (etSpeed.getText().toString().trim().isEmpty()){
+                    Toast.makeText(MainActivity.this, "Please enter speed value", Toast.LENGTH_SHORT).show();
+                }
+
+                else if (etTravel.getText().toString().trim().isEmpty()){
+                    Toast.makeText(MainActivity.this, "Please enter travel value", Toast.LENGTH_SHORT).show();
+                }
+
+                else if (etWait.getText().toString().trim().isEmpty()){
+                    Toast.makeText(MainActivity.this, "Please enter wait value", Toast.LENGTH_SHORT).show();
+                }
+
+               else if (etForce.getText().toString().trim().isEmpty()) {
                     Toast.makeText(MainActivity.this, "Please enter force value", Toast.LENGTH_SHORT).show();
                 }
+
+                else if (selectedList.isEmpty()){
+                    Toast.makeText(MainActivity.this, "Please choose a valid list", Toast.LENGTH_SHORT).show();
+                }
+
                 else {
                     MyDatabaseHelper myDB = new MyDatabaseHelper(MainActivity.this);
 
                     // Retrieve selected item from listSaveSelect
-                    String selectedList = saveSelect.getText().toString().trim();
+                    // String selectedList = saveSelect.getText().toString().trim();
 
                     myDB.addList(selectedList,
                             Float.parseFloat(etSpeed.getText().toString().trim()),
@@ -294,20 +330,34 @@ public class MainActivity extends AppCompatActivity  {
                 String newListName = editTextNewListName.getText().toString().trim();
 
                 if (!newListName.isEmpty()) {
+                    Log.d("MainActivity", "New List Name is not empty: " + newListName);
                     MyDatabaseHelper myDB = new MyDatabaseHelper(MainActivity.this);
                     myDB.addListName(newListName);
                     // Add the new list name to the 'lists' array
                     //lists[lists.length - 2] = newListName;
 
+                    String[] updatedLists = myDB.getListNames();
+
                     // Notify the AutoCompleteTextView adapter about the data change
                     AppCompatAutoCompleteTextView saveSelect = findViewById(R.id.listSaveSelect);
 
                     ArrayAdapter<String> adapter = (ArrayAdapter<String>) saveSelect.getAdapter();
+                    adapter.clear();
+                    adapter.addAll(updatedLists);
+
                     adapter.notifyDataSetChanged();
+                    for (int i = 0; i < adapter.getCount(); i++) {
+                        Log.d("ListNames", adapter.getItem(i));
+                    }
+
+                    if (!isFinishing() && dialog != null && dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
 
                     // Dismiss the popup
-                    dialog.dismiss();
+                    // dialog.dismiss();
                 } else {
+                    Log.d("MainActivity", "New List Name is empty");
                     Toast.makeText(MainActivity.this, "Please enter a name for the new list", Toast.LENGTH_SHORT).show();
                 }
             }

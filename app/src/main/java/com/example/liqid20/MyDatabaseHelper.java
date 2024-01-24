@@ -117,6 +117,7 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
         return db.rawQuery("DROP name FROM list_names", null);
     }
 
+
     public void updateListName(String oldListName, String newListName) {
         SQLiteDatabase db = this.getWritableDatabase();
 
