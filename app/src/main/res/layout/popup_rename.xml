@@ -14,7 +14,7 @@
         android:padding="60dp">
 
         <Button
-            android:id="@+id/buttonSaveNewList"
+            android:id="@+id/buttonSaveRenamedList"
             android:layout_width="114dp"
             android:layout_height="64dp"
             android:layout_marginStart="380dp"
@@ -33,14 +33,14 @@
             android:layout_width="337dp"
             android:layout_height="70dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/buttonSaveNewList"
+            app:layout_constraintEnd_toStartOf="@+id/buttonSaveRenamedList"
             app:layout_constraintHorizontal_bias="0.145"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.466">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/textInputNewList"
+                android:id="@+id/textInputRenamedList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/rename_list"

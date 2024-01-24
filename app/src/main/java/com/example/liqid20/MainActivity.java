@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity  {
     EditText etSpeed, etTravel, etWait, etForce;
     ImageButton buttonSave;
     ImageButton buttonSaveNew;
-    private String selectedList = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,20 +53,6 @@ public class MainActivity extends AppCompatActivity  {
                 Log.d("MainActivity", "Button Save New clicked");
                 showPopup(view);
             }
-        });
-
-        // Update the value of selectedList whenever the text changes
-        saveSelect.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                selectedList = charSequence.toString().trim();
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {}
         });
 
         // Initialises SeekBars and EditTexts
@@ -346,19 +331,19 @@ public class MainActivity extends AppCompatActivity  {
                     adapter.addAll(updatedLists);
 
                     adapter.notifyDataSetChanged();
-                    for (int i = 0; i < adapter.getCount(); i++) {
-                        Log.d("ListNames", adapter.getItem(i));
-                    }
+//                    for (int i = 0; i < adapter.getCount(); i++) {
+//                        Log.d("ListNames", adapter.getItem(i));
+//                    }
 
-                    if (!isFinishing() && dialog != null && dialog.isShowing()) {
-                        dialog.dismiss();
-                    }
+                    //if (!isFinishing() && dialog != null && dialog.isShowing()) {
+                    //    dialog.dismiss();
+                    //}
 
                     // Dismiss the popup
-                    // dialog.dismiss();
+                    dialog.dismiss();
+
                 } else {
                     Log.d("MainActivity", "New List Name is empty");
-                    Toast.makeText(MainActivity.this, "Please enter a name for the new list", Toast.LENGTH_SHORT).show();
                 }
             }
         });

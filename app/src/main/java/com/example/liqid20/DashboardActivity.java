@@ -13,6 +13,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -42,6 +44,7 @@ public class DashboardActivity extends AppCompatActivity {
     CustomAdapter customAdapter;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 1;
     ImageButton buttonEditListName;
+    ImageButton buttonDeleteList;
     RadioButton radioButtonYes;
     RadioButton radioButtonNo;
 
@@ -95,7 +98,15 @@ public class DashboardActivity extends AppCompatActivity {
         buttonEditListName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showPopup(view);
+                showPopupEdit(view);
+            }
+        });
+
+        buttonDeleteList =  findViewById(R.id.buttonDeleteList);
+        buttonDeleteList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPopupDelete(view);
             }
         });
     }
@@ -110,8 +121,8 @@ public class DashboardActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000"))); // Dark gray background color with 50% opacity
 
         // Set up your popup content and functionality
-        RadioButton radioButtonYes = findViewById(R.id.radioButtonYes);
-        RadioButton radioButtonNo = findViewById(R.id.radioButtonNo);
+        RadioButton radioButtonYes = popupView.findViewById(R.id.radioButtonYes);
+        RadioButton radioButtonNo = popupView.findViewById(R.id.radioButtonNo);
 
         radioButtonYes.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,7 +153,7 @@ public class DashboardActivity extends AppCompatActivity {
         dialog.getWindow().setGravity(Gravity.CENTER);
     }
 
-    private void showPopup(View anchorView) {
+    private void showPopupEdit(View anchorView) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View popupView = LayoutInflater.from(this).inflate(R.layout.popup_rename, null);
         builder.setView(popupView);
@@ -152,25 +163,25 @@ public class DashboardActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000"))); // Dark gray background color with 50% opacity
 
         // Set up your popup content and functionality
-        EditText editTextNewListName = popupView.findViewById(R.id.textInputNewList);
-        Button buttonSaveNewList = popupView.findViewById(R.id.buttonSaveNewList);
+        EditText editTextRenamedList = popupView.findViewById(R.id.textInputRenamedList);
+        Button buttonRenamedList = popupView.findViewById(R.id.buttonSaveRenamedList);
 
-        buttonSaveNewList.setOnClickListener(new View.OnClickListener() {
+        buttonRenamedList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Handles the instance of saving the data set
-                String newListName = editTextNewListName.getText().toString().trim();
+                String newListName = editTextRenamedList.getText().toString().trim();
 
                 if (!newListName.isEmpty()) {
                     MyDatabaseHelper myDB = new MyDatabaseHelper(DashboardActivity.this);
-                    myDB.updateListName(selectedList, newListName);
+                    myDB.updateListName("name", newListName);
                     // saves the new name in the 'lists' array
 
                     // Notify the AutoCompleteTextView adapter about the data change
-                    // AppCompatAutoCompleteTextView saveSelect = findViewById(R.id.listSaveSelect);
+                    AppCompatAutoCompleteTextView saveSelect = popupView.findViewById(R.id.listSaveSelect);
 
-                    // ArrayAdapter<String> adapter = (ArrayAdapter<String>) saveSelect.getAdapter();
-                    // adapter.notifyDataSetChanged();
+                    ArrayAdapter<String> adapter = (ArrayAdapter<String>) saveSelect.getAdapter();
+                    adapter.notifyDataSetChanged();
 
                     // Dismiss the popup
                     dialog.dismiss();
