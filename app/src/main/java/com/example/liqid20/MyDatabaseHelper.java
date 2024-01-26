@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -48,7 +49,8 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db.execSQL("DROP TABLE IF EXISTS dataset; DROP TABLE IF EXISTS list_names;");
+        db.execSQL("DROP TABLE IF EXISTS dataset;");
+        db.execSQL("DROP TABLE IF EXISTS list_names;");
         onCreate(db);
     }
 
@@ -112,11 +114,10 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public Cursor deleteTable() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("DROP name FROM list_names", null);
+    public void deleteTable(String listName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete("list_names", "name = ?", new String[]{listName});
     }
-
 
     public void updateListName(String oldListName, String newListName) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -125,6 +126,8 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
         values.put("name", newListName);
 
         int rowsAffected = db.update("list_names", values, "name = ?", new String[]{oldListName});
+
+        Log.d("UpdateListName", "Rows affected: " + rowsAffected);
 
         if (rowsAffected > 0) {
             Toast.makeText(context, "List name updated successfully", Toast.LENGTH_SHORT).show();

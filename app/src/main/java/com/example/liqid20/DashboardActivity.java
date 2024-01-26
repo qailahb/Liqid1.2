@@ -124,18 +124,21 @@ public class DashboardActivity extends AppCompatActivity {
         RadioButton radioButtonYes = popupView.findViewById(R.id.radioButtonYes);
         RadioButton radioButtonNo = popupView.findViewById(R.id.radioButtonNo);
 
+        Intent intent = getIntent();
+        String selectedList = intent.getStringExtra("SELECTED_LIST");
+
         radioButtonYes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                myDB.deleteTable();
+                myDB.deleteTable(selectedList);
+                dialog.dismiss();
             }
         });
 
         radioButtonNo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(DashboardActivity.this, DashboardActivity.class);
-                startActivity(intent);
+                dialog.dismiss();
             }
         });
 
@@ -178,9 +181,9 @@ public class DashboardActivity extends AppCompatActivity {
                     // saves the new name in the 'lists' array
 
                     // Notify the AutoCompleteTextView adapter about the data change
-                    AppCompatAutoCompleteTextView saveSelect = popupView.findViewById(R.id.listSaveSelect);
+                    AppCompatAutoCompleteTextView saveSelect = findViewById(R.id.listSaveSelect);
 
-                    ArrayAdapter<String> adapter = (ArrayAdapter<String>) saveSelect.getAdapter();
+                    ArrayAdapter<String> adapter = (ArrayAdapter<String>)saveSelect.getAdapter();
                     adapter.notifyDataSetChanged();
 
                     // Dismiss the popup

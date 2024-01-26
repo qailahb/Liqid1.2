@@ -331,6 +331,8 @@ public class MainActivity extends AppCompatActivity  {
                     adapter.addAll(updatedLists);
 
                     adapter.notifyDataSetChanged();
+
+                    // check for
 //                    for (int i = 0; i < adapter.getCount(); i++) {
 //                        Log.d("ListNames", adapter.getItem(i));
 //                    }
