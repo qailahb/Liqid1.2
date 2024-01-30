@@ -33,18 +33,15 @@ public class MainActivity extends AppCompatActivity  {
     EditText etSpeed, etTravel, etWait, etForce;
     ImageButton buttonSave;
     ImageButton buttonSaveNew;
+    AppCompatAutoCompleteTextView saveSelect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        saveSelect = findViewById(R.id.listSaveSelect);
 
-        AppCompatAutoCompleteTextView saveSelect = findViewById(R.id.listSaveSelect);
-        MyDatabaseHelper myDB = new MyDatabaseHelper(MainActivity.this);
-        String[] lists = myDB.getListNames();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_item, lists);
-        saveSelect.setThreshold(1);
-        saveSelect.setAdapter(adapter);
+        LoadAdapter();
 
         buttonSaveNew = findViewById(R.id.buttonSaveNew);
         buttonSaveNew.setOnClickListener(new View.OnClickListener() {
@@ -295,6 +292,14 @@ public class MainActivity extends AppCompatActivity  {
         });
     }
 
+    private void LoadAdapter() {
+        MyDatabaseHelper myDB = new MyDatabaseHelper(MainActivity.this);
+        String[] lists = myDB.getListNames();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.select_dialog_item, lists);
+        saveSelect.setThreshold(1);
+        saveSelect.setAdapter(adapter);
+    }
+
     private void showPopup(View anchorView) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View popupView = LayoutInflater.from(this).inflate(R.layout.popup, null);
@@ -315,34 +320,18 @@ public class MainActivity extends AppCompatActivity  {
                 String newListName = editTextNewListName.getText().toString().trim();
 
                 if (!newListName.isEmpty()) {
+                    dialog.dismiss();
+
                     Log.d("MainActivity", "New List Name is not empty: " + newListName);
                     MyDatabaseHelper myDB = new MyDatabaseHelper(MainActivity.this);
                     myDB.addListName(newListName);
                     // Add the new list name to the 'lists' array
                     //lists[lists.length - 2] = newListName;
 
-                    String[] updatedLists = myDB.getListNames();
-
-                    // Notify the AutoCompleteTextView adapter about the data change
-                    AppCompatAutoCompleteTextView saveSelect = findViewById(R.id.listSaveSelect);
-
-                    ArrayAdapter<String> adapter = (ArrayAdapter<String>) saveSelect.getAdapter();
-                    adapter.clear();
-                    adapter.addAll(updatedLists);
-
-                    adapter.notifyDataSetChanged();
-
-                    // check for
-//                    for (int i = 0; i < adapter.getCount(); i++) {
-//                        Log.d("ListNames", adapter.getItem(i));
-//                    }
-
-                    //if (!isFinishing() && dialog != null && dialog.isShowing()) {
-                    //    dialog.dismiss();
-                    //}
+                    LoadAdapter();
 
                     // Dismiss the popup
-                    dialog.dismiss();
+
 
                 } else {
                     Log.d("MainActivity", "New List Name is empty");
