@@ -114,10 +114,11 @@ class MyDatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
-    public void deleteTable(String listName) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.delete("list_names", "name = ?", new String[]{listName});
-    }
+    // Method for deleting lists
+//    public void deleteTable(String listName) {
+//        SQLiteDatabase db = this.getWritableDatabase();
+//        db.delete("list_names", "name = ?", new String[]{listName});
+//    }
 
     public void updateListName(String oldListName, String newListName) {
         SQLiteDatabase db = this.getWritableDatabase();

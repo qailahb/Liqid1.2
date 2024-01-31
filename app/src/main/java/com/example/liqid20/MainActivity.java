@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity  {
     EditText etSpeed, etTravel, etWait, etForce;
     ImageButton buttonSave;
     ImageButton buttonSaveNew;
+    ImageButton buttonEditListName;
+    // ImageButton buttonDeleteList;
     AppCompatAutoCompleteTextView saveSelect;
 
     @Override
@@ -51,6 +53,28 @@ public class MainActivity extends AppCompatActivity  {
                 showPopup(view);
             }
         });
+
+        buttonEditListName = findViewById(R.id.buttonEditListName);
+        buttonEditListName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String selectedList = saveSelect.getText().toString().trim();
+                if (!selectedList.isEmpty()) {
+                    showPopupEdit(view, selectedList);
+                } else {
+                    Toast.makeText(MainActivity.this, "Please choose a list to edit", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
+//        buttonDeleteList =  findViewById(R.id.buttonDeleteList);
+//        buttonDeleteList.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                showPopupDelete(view);
+//            }
+//        });
 
         // Initialises SeekBars and EditTexts
         SeekBar sbSpeed = findViewById(R.id.seekBarSpeed);
@@ -353,6 +377,111 @@ public class MainActivity extends AppCompatActivity  {
         dialog.getWindow().setGravity(Gravity.CENTER);
     }
 
+    private void showPopupEdit(View anchorView, String selectedList) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View popupView = LayoutInflater.from(this).inflate(R.layout.popup_rename, null);
+        builder.setView(popupView);
+        AlertDialog dialog = builder.create();
+
+        // Enable background dimming
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000"))); // Dark gray background color with 50% opacity
+
+        // Set up your popup content and functionality
+        EditText editTextRenamedList = popupView.findViewById(R.id.textInputRenamedList);
+        Button buttonRenamedList = popupView.findViewById(R.id.buttonSaveRenamedList);
+
+        buttonRenamedList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Handles the instance of saving the data set
+                String newListName = editTextRenamedList.getText().toString().trim();
+
+                if (!newListName.isEmpty()) {
+                    MyDatabaseHelper myDB = new MyDatabaseHelper(MainActivity.this);
+                    myDB.updateListName(selectedList, newListName);
+                    // saves the new name in the 'lists' array
+
+                    LoadAdapter();
+
+                    saveSelect.setText("");
+
+                    dialog.dismiss();
+
+//                    // Notify the AutoCompleteTextView adapter about the data change
+//                    AppCompatAutoCompleteTextView saveSelect = findViewById(R.id.listSaveSelect);
+//
+//                    ArrayAdapter<String> adapter = (ArrayAdapter<String>)saveSelect.getAdapter();
+//                    adapter.notifyDataSetChanged();
+//
+//                    // Dismiss the popup
+//                    dialog.dismiss();
+                } else {
+                    Toast.makeText(MainActivity.this, "Please enter a new name for the list", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        View rootView = getWindow().getDecorView().getRootView();
+
+        // Calculates the center of the screen
+        int[] location = new int[2];
+        rootView.getLocationOnScreen(location);
+        int centerX = location[0] + rootView.getWidth() / 2;
+        int centerY = location[1] + rootView.getHeight() / 2;
+
+        // Shows popup at the center of the screen
+        dialog.show();
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setGravity(Gravity.CENTER);
+    }
+
+
+    // Method for deleting a list and all of its data
+//    private void showPopupDelete(View anchorView) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        View popupView = LayoutInflater.from(this).inflate(R.layout.popup_delete, null);
+//        builder.setView(popupView);
+//        AlertDialog dialog = builder.create();
+//
+//        // Enable background dimming
+//        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000"))); // Dark gray background color with 50% opacity
+//
+//        // Set up your popup content and functionality
+//        RadioButton radioButtonYes = popupView.findViewById(R.id.radioButtonYes);
+//        RadioButton radioButtonNo = popupView.findViewById(R.id.radioButtonNo);
+//
+//        Intent intent = getIntent();
+//        String selectedList = intent.getStringExtra("SELECTED_LIST");
+//
+//        radioButtonYes.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                MyDatabaseHelper myDB = new MyDatabaseHelper(MainActivity.this);
+//                myDB.deleteTable(selectedList);
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        radioButtonNo.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dialog.dismiss();
+//            }
+//        });
+//
+//        View rootView = getWindow().getDecorView().getRootView();
+//
+//        // Calculates the center of the screen
+//        int[] location = new int[2];
+//        rootView.getLocationOnScreen(location);
+//        int centerX = location[0] + rootView.getWidth() / 2;
+//        int centerY = location[1] + rootView.getHeight() / 2;
+//
+//        // Shows popup at the center of the screen
+//        dialog.show();
+//        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//        dialog.getWindow().setGravity(Gravity.CENTER);
+//    }
 
     public void openDashboard(String selectedList) {
         Intent intent = new Intent(MainActivity.this, DashboardActivity.class);

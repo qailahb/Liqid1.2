@@ -1,29 +1,25 @@
 package com.example.liqid20;
 
-import android.app.AlertDialog;
-import android.content.Intent;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatAutoCompleteTextView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,9 +27,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.opencsv.CSVWriter;
 
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -43,7 +39,6 @@ public class DashboardActivity extends AppCompatActivity {
     ArrayList<Float> reading_speed, reading_travel, reading_wait, reading_force;
     CustomAdapter customAdapter;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 1;
-    ImageButton buttonEditListName;
     ImageButton buttonDeleteList;
     RadioButton radioButtonYes;
     RadioButton radioButtonNo;
@@ -66,6 +61,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         Button exportButton = findViewById(R.id.buttonExport);
         exportButton.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.Q)
             @Override
             public void onClick(View v) {
                 exportDataToCsv();
@@ -94,119 +90,8 @@ public class DashboardActivity extends AppCompatActivity {
         recyclerView.setAdapter(customAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(DashboardActivity.this));
 
-        buttonEditListName = findViewById(R.id.buttonEditListName);
-        buttonEditListName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showPopupEdit(view);
-            }
-        });
-
-        buttonDeleteList =  findViewById(R.id.buttonDeleteList);
-        buttonDeleteList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showPopupDelete(view);
-            }
-        });
     }
 
-    private void showPopupDelete(View anchorView) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View popupView = LayoutInflater.from(this).inflate(R.layout.popup_delete, null);
-        builder.setView(popupView);
-        AlertDialog dialog = builder.create();
-
-        // Enable background dimming
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000"))); // Dark gray background color with 50% opacity
-
-        // Set up your popup content and functionality
-        RadioButton radioButtonYes = popupView.findViewById(R.id.radioButtonYes);
-        RadioButton radioButtonNo = popupView.findViewById(R.id.radioButtonNo);
-
-        Intent intent = getIntent();
-        String selectedList = intent.getStringExtra("SELECTED_LIST");
-
-        radioButtonYes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myDB.deleteTable(selectedList);
-                dialog.dismiss();
-            }
-        });
-
-        radioButtonNo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-            }
-        });
-
-        View rootView = getWindow().getDecorView().getRootView();
-
-        // Calculates the center of the screen
-        int[] location = new int[2];
-        rootView.getLocationOnScreen(location);
-        int centerX = location[0] + rootView.getWidth() / 2;
-        int centerY = location[1] + rootView.getHeight() / 2;
-
-        // Shows popup at the center of the screen
-        dialog.show();
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setGravity(Gravity.CENTER);
-    }
-
-    private void showPopupEdit(View anchorView) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View popupView = LayoutInflater.from(this).inflate(R.layout.popup_rename, null);
-        builder.setView(popupView);
-        AlertDialog dialog = builder.create();
-
-        // Enable background dimming
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000"))); // Dark gray background color with 50% opacity
-
-        // Set up your popup content and functionality
-        EditText editTextRenamedList = popupView.findViewById(R.id.textInputRenamedList);
-        Button buttonRenamedList = popupView.findViewById(R.id.buttonSaveRenamedList);
-
-        buttonRenamedList.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handles the instance of saving the data set
-                String newListName = editTextRenamedList.getText().toString().trim();
-
-                if (!newListName.isEmpty()) {
-                    MyDatabaseHelper myDB = new MyDatabaseHelper(DashboardActivity.this);
-                    myDB.updateListName("name", newListName);
-                    // saves the new name in the 'lists' array
-
-                    // Notify the AutoCompleteTextView adapter about the data change
-                    AppCompatAutoCompleteTextView saveSelect = findViewById(R.id.listSaveSelect);
-
-                    ArrayAdapter<String> adapter = (ArrayAdapter<String>)saveSelect.getAdapter();
-                    adapter.notifyDataSetChanged();
-
-                    // Dismiss the popup
-                    dialog.dismiss();
-                } else {
-                    Toast.makeText(DashboardActivity.this, "Please enter a new name for the list", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        View rootView = getWindow().getDecorView().getRootView();
-
-        // Calculates the center of the screen
-        int[] location = new int[2];
-        rootView.getLocationOnScreen(location);
-        int centerX = location[0] + rootView.getWidth() / 2;
-        int centerY = location[1] + rootView.getHeight() / 2;
-
-        // Shows popup at the center of the screen
-        dialog.show();
-        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        dialog.getWindow().setGravity(Gravity.CENTER);
-    }
 
     void storeData(String selectedList) {
         Cursor cursor = myDB.readData(selectedList);
@@ -235,37 +120,46 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     private void exportDataToCsv() {
         MyDatabaseHelper dbHelper = new MyDatabaseHelper(this);
         Cursor cursor = dbHelper.getDataFromTable();
 
-        if (cursor != null) {
+        if (cursor != null && cursor.getCount() > 0) {
             try {
-                // Directory in the Documents folder
-                File directory = new File(Environment.getExternalStoragePublicDirectory(
-                        Environment.DIRECTORY_DOCUMENTS), "LIQID");
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Downloads.DISPLAY_NAME, "exported_data.csv");
+                values.put(MediaStore.Downloads.MIME_TYPE, "text/csv");
 
-                if (!directory.exists()) {
-                    directory.mkdirs();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS + "/LIQID");
                 }
 
-                // File in the directory
-                File file = new File(directory, "exported_data.csv");
+                ContentResolver resolver = getContentResolver();
+                Uri csvUri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
 
-                // Writes data to CSV file
-                writeDataToCsv(cursor, file);
-
-                Toast.makeText(this, "Data exported to " + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+                if (csvUri != null) {
+                    try {
+                        writeDataToCsv(cursor, resolver.openOutputStream(csvUri));
+                        Toast.makeText(this, "Data exported to " + csvUri.toString(), Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        Log.e("CSV Export", "Error writing CSV", e);
+                    }
+                } else {
+                    Toast.makeText(this, "Failed to create CSV file", Toast.LENGTH_SHORT).show();
+                }
             } finally {
                 cursor.close();
             }
+        } else {
+            Toast.makeText(this, "No data to export", Toast.LENGTH_SHORT).show();
         }
     }
 
 
-    private void writeDataToCsv(Cursor cursor, File file) {
+    private void writeDataToCsv(Cursor cursor, OutputStream file) {
         try {
-            FileWriter fw = new FileWriter(file);
+            FileWriter fw = new FileWriter(file.toString());
             CSVWriter csvWriter = new CSVWriter(fw);
 
             // Writes column names to CSV file
@@ -287,6 +181,7 @@ public class DashboardActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
