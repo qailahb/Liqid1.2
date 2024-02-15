@@ -67,10 +67,10 @@ public class DashboardActivity extends AppCompatActivity {
                 exportDataToCsv();
             }
         });
-        // Retrieve the selected item from the Intent extra
+
         String selectedList = getIntent().getStringExtra("SELECTED_LIST");
 
-        // Use the selected item as a label (you can set it to a TextView or any other UI element)
+        // Use selected item as a label
         TextView listLabel = findViewById(R.id.listLabel);
         listLabel.setText(selectedList);
 

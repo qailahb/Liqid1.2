@@ -27,7 +27,6 @@ import com.google.android.material.textfield.TextInputLayout;
 public class MainActivity extends AppCompatActivity  {
 
     //private static final String[] lists = new String[]{ "QFLOW-VI-LOT", "QFLOW-VI-LOT1", "QFLOW-VI-LOT2", "QFLOW-VI-LOT3", "QFLOW-VI-LOT4", "Add New List" };
-
     // Initialisation of hashmap - if decided to use
     // private Map<String, List<DataModel>> optionToListMap = new HashMap<>();
     EditText etSpeed, etTravel, etWait, etForce;
@@ -89,7 +88,7 @@ public class MainActivity extends AppCompatActivity  {
         etWait = findViewById(R.id.Wait);
         etForce = findViewById(R.id.valueForce);
 
-        // Implement TextWatcher to ensure proper input format
+        // Implement TextWatcher to format
         DecimalTextWatcher decimalInputTextWatcher = new DecimalTextWatcher(etSpeed);
         etSpeed.addTextChangedListener(decimalInputTextWatcher);
 
@@ -141,7 +140,7 @@ public class MainActivity extends AppCompatActivity  {
                 float speed_max = 15;
 
                 if (editable.length() > 0) {
-                    // User has started typing, updates hint
+                    // updates hint when user starts typing
                     textInputLayout2.setHint("Speed [mm/s]");
 
                     if (speedValue > speed_max) {
@@ -151,7 +150,7 @@ public class MainActivity extends AppCompatActivity  {
                     }
 
                 } else {
-                    // No input, reset to default hint
+                    // In the case of no input
                     textInputLayout2.setHint("Speed");
                 }
             }
@@ -165,10 +164,10 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void afterTextChanged(Editable editable) {
                 if (editable.length() > 0) {
-                    // User has started typing, update hint
+
                     textInputLayout3.setHint("Travel [mm]");
                 } else {
-                    // No input, reset to default hint
+
                     textInputLayout3.setHint("Travel");
                 }
 
@@ -183,7 +182,7 @@ public class MainActivity extends AppCompatActivity  {
                         textInputLayout3.setError(null);
                     }
                 } catch (NumberFormatException e) {
-                    // Handles the case when text can't be converted to a float
+                    // text can't be converted to a float
                     textInputLayout3.setError("Invalid input");
                 }
             }
@@ -197,10 +196,10 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void afterTextChanged(Editable editable) {
                 if (editable.length() > 0) {
-                    // User has started typing, update hint
+
                     textInputLayout.setHint("Wait [mm]");
                 } else {
-                    // No input, reset to default hint
+
                     textInputLayout.setHint("Wait");
                 }
                 try {
@@ -214,7 +213,7 @@ public class MainActivity extends AppCompatActivity  {
                         textInputLayout.setError(null);
                     }
                 } catch (NumberFormatException e) {
-                    // Handles the case when text can't be converted to a float
+
                     textInputLayout.setError("Invalid input");
                 }
             }
@@ -228,10 +227,10 @@ public class MainActivity extends AppCompatActivity  {
             @Override
             public void afterTextChanged(Editable editable) {
                 if (editable.length() > 0) {
-                    // User has started typing, update hint
+
                     textInputLayout3.setHint("Travel [mm]");
                 } else {
-                    // No input, reset to default hint
+
                     textInputLayout3.setHint("Travel");
                 }
 
@@ -246,7 +245,7 @@ public class MainActivity extends AppCompatActivity  {
                         textInputLayout3.setError(null);
                     }
                 } catch (NumberFormatException e) {
-                    // Handle the case when text can't be converted to a float
+
                     textInputLayout3.setError("Invalid input");
                 }
             }
@@ -330,17 +329,16 @@ public class MainActivity extends AppCompatActivity  {
         builder.setView(popupView);
         AlertDialog dialog = builder.create();
 
-        // Enable background dimming
+        // Enables background dimming
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000"))); // Dark gray background color with 50% opacity
 
-        // Set up your popup content and functionality
         EditText editTextNewListName = popupView.findViewById(R.id.textInputNewList);
         Button buttonSaveNewList = popupView.findViewById(R.id.buttonSaveNewList);
 
         buttonSaveNewList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handles the instance of saving the data set
+                // Handles saving the data set
                 String newListName = editTextNewListName.getText().toString().trim();
 
                 if (!newListName.isEmpty()) {
@@ -365,13 +363,13 @@ public class MainActivity extends AppCompatActivity  {
 
         View rootView = getWindow().getDecorView().getRootView();
 
-        // Calculates the center of the screen
+        // Calculates center of screen
         int[] location = new int[2];
         rootView.getLocationOnScreen(location);
         int centerX = location[0] + rootView.getWidth() / 2;
         int centerY = location[1] + rootView.getHeight() / 2;
 
-        // Shows popup at the center of the screen
+        // Shows popup
         dialog.show();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setGravity(Gravity.CENTER);
@@ -383,17 +381,16 @@ public class MainActivity extends AppCompatActivity  {
         builder.setView(popupView);
         AlertDialog dialog = builder.create();
 
-        // Enable background dimming
+        // Enables background dimming
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#80000000"))); // Dark gray background color with 50% opacity
 
-        // Set up your popup content and functionality
         EditText editTextRenamedList = popupView.findViewById(R.id.textInputRenamedList);
         Button buttonRenamedList = popupView.findViewById(R.id.buttonSaveRenamedList);
 
         buttonRenamedList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Handles the instance of saving the data set
+
                 String newListName = editTextRenamedList.getText().toString().trim();
 
                 if (!newListName.isEmpty()) {
@@ -423,13 +420,11 @@ public class MainActivity extends AppCompatActivity  {
 
         View rootView = getWindow().getDecorView().getRootView();
 
-        // Calculates the center of the screen
         int[] location = new int[2];
         rootView.getLocationOnScreen(location);
         int centerX = location[0] + rootView.getWidth() / 2;
         int centerY = location[1] + rootView.getHeight() / 2;
 
-        // Shows popup at the center of the screen
         dialog.show();
         dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         dialog.getWindow().setGravity(Gravity.CENTER);
@@ -508,7 +503,7 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
-        // TextWatcher for EditText to update based on scrollbar values
+        // updates editText based on scrollbar values
         et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int j, int k) {

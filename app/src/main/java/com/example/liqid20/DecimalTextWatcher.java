@@ -14,12 +14,12 @@ public class DecimalTextWatcher implements TextWatcher {
 
     @Override
     public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
-        // Not used in this example
+        // Not used
     }
 
     @Override
     public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-        // Not used in this example
+        // Not used
     }
 
     @Override
@@ -28,10 +28,9 @@ public class DecimalTextWatcher implements TextWatcher {
 
         String originalString = editable.toString();
 
-        // Remove all non-numeric characters except a single dot
+        // Remove all non-numeric characters
         String cleanString = originalString.replaceAll("[^\\d.]", "");
 
-        // If there is more than one dot, remove the excess dots
         if (cleanString.indexOf(".") != cleanString.lastIndexOf(".")) {
             cleanString = cleanString.substring(0, cleanString.lastIndexOf(".")) +
                     cleanString.substring(cleanString.lastIndexOf(".") + 1);
